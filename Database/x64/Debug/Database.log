@@ -1,17 +1,13 @@
 ﻿  main.cpp
-D:\Modules\Database\Database.hpp(26715,9): warning C4099: 'fz::Cell': 처음에는 'class'을(를) 사용하여 형식 이름을 표시했는데 이제는 'struct'을(를) 사용하여 표시합니다.
-  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
-      D:\Modules\Database\Database.hpp(26715,9):
-      'fz::Cell' 선언을 참조하십시오.
-  
-D:\Modules\Database\Database.hpp(26751,1): warning C4172: 지역 변수 또는 임시 : result의 주소를 반환하는 중
-D:\Modules\Database\Database.hpp(26729,1): warning C4172: 지역 변수 또는 임시 : result의 주소를 반환하는 중
-D:\Modules\Database\Database.hpp(26762,1): warning C4172: 지역 변수 또는 임시 : result의 주소를 반환하는 중
-D:\Modules\Database\Database.hpp(26773,1): warning C4172: 지역 변수 또는 임시 : result의 주소를 반환하는 중
-D:\Modules\Database\Database.hpp(26740,1): warning C4172: 지역 변수 또는 임시 : result의 주소를 반환하는 중
-D:\Modules\Database\Database.hpp(26784,1): warning C4172: 지역 변수 또는 임시 : result의 주소를 반환하는 중
-D:\Modules\Database\Database.hpp(26817,1): warning C4172: 지역 변수 또는 임시 : result의 주소를 반환하는 중
-D:\Modules\Database\Database.hpp(26806,1): warning C4172: 지역 변수 또는 임시 : result의 주소를 반환하는 중
-D:\Modules\Database\Database.hpp(26795,1): warning C4172: 지역 변수 또는 임시 : result의 주소를 반환하는 중
-D:\Modules\Database\Database.hpp(26828,1): warning C4172: 지역 변수 또는 임시 : result의 주소를 반환하는 중
-  Database.vcxproj -> D:\Modules\x64\Debug\Database.exe
+D:\dev\Modules\Database\Database.hpp(26769,9): warning C4099: 'fz::Cell': 처음에는 'class'을(를) 사용하여 형식 이름을 표시했는데 이제는 'struct'을(를) 사용하여 표시합니다.
+D:\dev\Modules\Database\Database.hpp(26794,1): warning C4172: 지역 변수 또는 임시: result의 주소를 반환하고 있습니다.
+D:\dev\Modules\Database\Database.hpp(26783,1): warning C4172: 지역 변수 또는 임시: result의 주소를 반환하고 있습니다.
+D:\dev\Modules\Database\Database.hpp(26805,1): warning C4172: 지역 변수 또는 임시: result의 주소를 반환하고 있습니다.
+D:\dev\Modules\Database\Database.hpp(26816,1): warning C4172: 지역 변수 또는 임시: result의 주소를 반환하고 있습니다.
+D:\dev\Modules\Database\Database.hpp(26827,1): warning C4172: 지역 변수 또는 임시: result의 주소를 반환하고 있습니다.
+D:\dev\Modules\Database\Database.hpp(26838,1): warning C4172: 지역 변수 또는 임시: result의 주소를 반환하고 있습니다.
+D:\dev\Modules\Database\Database.hpp(26860,1): warning C4172: 지역 변수 또는 임시: result의 주소를 반환하고 있습니다.
+D:\dev\Modules\Database\Database.hpp(26849,1): warning C4172: 지역 변수 또는 임시: result의 주소를 반환하고 있습니다.
+D:\dev\Modules\Database\Database.hpp(26871,1): warning C4172: 지역 변수 또는 임시: result의 주소를 반환하고 있습니다.
+D:\dev\Modules\Database\Database.hpp(26882,1): warning C4172: 지역 변수 또는 임시: result의 주소를 반환하고 있습니다.
+  Database.vcxproj -> D:\dev\Modules\x64\Debug\Database.exe

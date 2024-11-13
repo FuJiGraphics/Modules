@@ -18,7 +18,8 @@ void RuntimeTest()
 	auto& csvTable = Database::GetCsvTable(csvPath);
 	auto& json = Database::GetJsonObject(jsonPath);
 
-	csvTable["Aad"]["asd"];
+	std::string num = csvTable["Wave1"]["Crawler"];
+	cout << num << endl;
 
 	csvTable.PrintTable();
 	cout << json << endl;

@@ -2,7 +2,7 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
-      <FullPath>D:\Modules\x64\Debug\Database.exe</FullPath>
+      <FullPath>D:\dev\Modules\x64\Debug\Database.exe</FullPath>
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

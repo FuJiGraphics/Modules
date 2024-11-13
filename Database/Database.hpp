@@ -1,4 +1,4 @@
-#pragma once
+癤�#pragma once
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -18812,7 +18812,7 @@ namespace detail
         // |  |  |__   |  |  | | | |  version 3.11.3
         // |_____|_____|_____|_|___|  https://github.com/nlohmann/json
         //
-        // SPDX-FileCopyrightText: 2008-2009 Bj철rn Hoehrmann <bjoern@hoehrmann.de>
+        // SPDX-FileCopyrightText: 2008-2009 Bj泥쟲n Hoehrmann <bjoern@hoehrmann.de>
         // SPDX-FileCopyrightText: 2013-2023 Niels Lohmann <https://nlohmann.me>
         // SPDX-License-Identifier: MIT
 
@@ -26689,36 +26689,54 @@ template <class Key, class T, class IgnoredLess = std::less<Key>,
 namespace fz {
 #include <Windows.h>
     namespace _internal {
-        void convert_unicode_to_utf8_string(
-            std::string& utf8,
-            const wchar_t* unicode,
-            const size_t unicode_size
-        ) {
+        static void convert_unicode_to_utf8_string(std::string& utf8, const wchar_t* unicode, const size_t unicode_size) 
+        {
             do {
-                if ((nullptr == unicode) || (0 == unicode_size)) {
+                if ((nullptr == unicode) || (0 == unicode_size)) 
+                {
                     break;
                 }
                 utf8.clear();
-                int required_cch = ::WideCharToMultiByte(
+                int required_cch = WideCharToMultiByte(
                     CP_UTF8,
                     WC_ERR_INVALID_CHARS,
                     unicode, static_cast<int>(unicode_size),
                     nullptr, 0,
                     nullptr, nullptr
                 );
-                if (0 == required_cch) {
+                if (0 == required_cch) 
+                {
                     break;
                 }
                 utf8.resize(required_cch);
-                if (0 == ::WideCharToMultiByte(
-                    CP_UTF8,
-                    WC_ERR_INVALID_CHARS,
-                    unicode, static_cast<int>(unicode_size),
-                    const_cast<char*>(utf8.c_str()), static_cast<int>(utf8.size()),
-                    nullptr, nullptr
-                )) {
+                if (0 == WideCharToMultiByte(CP_UTF8, WC_ERR_INVALID_CHARS, unicode, 
+                    static_cast<int>(unicode_size),const_cast<char*>(utf8.c_str()), 
+                    static_cast<int>(utf8.size()), nullptr, nullptr)) 
+                {
                     break;
                 }
+            } while (false);
+        }
+
+        void convert_utf8_to_unicode_string(std::wstring& unicode, const char* utf8, const size_t utf8_size) 
+        {
+            do {
+                if ((nullptr == utf8) || (0 == utf8_size)) 
+                {
+                    break;
+                }
+                unicode.clear();
+                int required_cch = MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, utf8, static_cast<int>(utf8_size), nullptr, 0);
+                if (0 == required_cch) {
+                    break;
+                }
+                unicode.resize(required_cch);
+                if (0 == MultiByteToWideChar(CP_UTF8, MB_ERR_INVALID_CHARS, utf8, static_cast<int>(utf8_size),
+                    const_cast<wchar_t*>(unicode.c_str()), static_cast<int>(unicode.size()))) 
+                {
+                    break;
+                }
+
             } while (false);
         }
     }
@@ -26745,15 +26763,16 @@ namespace fz {
 		virtual operator long double& () = 0;
 		virtual operator const char* () = 0;
 		virtual operator std::string& () = 0;
+        virtual operator std::wstring& () = 0;
 	};
 
 	struct Cell : public PassingOperators
 	{
-		std::string Data;
+		std::wstring Data;
 		std::string Attribute;
         std::string Key;
 
-        operator short& ()
+        operator short& () override
         {
             short result = 0;
             try {
@@ -26764,7 +26783,7 @@ namespace fz {
             return result;
         }
 
-        operator int& ()
+        operator int& () override
         {
             int result = 0;
             try {
@@ -26775,7 +26794,7 @@ namespace fz {
             return result;
         }
 
-        operator long& ()
+        operator long& () override
         {
             long result = 0;
             try {
@@ -26786,7 +26805,7 @@ namespace fz {
             return result;
         }
 
-        operator long long& ()
+        operator long long& () override
         {
             long long result = 0;
             try {
@@ -26797,7 +26816,7 @@ namespace fz {
             return result;
         }
 
-        operator unsigned int& ()
+        operator unsigned int& () override
         {
             unsigned int result = 0;
             try {
@@ -26808,7 +26827,7 @@ namespace fz {
             return result;
         }
 
-        operator unsigned long& ()
+        operator unsigned long& () override
         {
             unsigned long result = 0;
             try {
@@ -26819,7 +26838,7 @@ namespace fz {
             return result;
         }
 
-        operator unsigned long long& ()
+        operator unsigned long long& () override
         {
             unsigned long long result = 0;
             try {
@@ -26830,7 +26849,7 @@ namespace fz {
             return result;
         }
 
-        operator float& ()
+        operator float& () override
         {
             float result = 0.0f;
             try {
@@ -26841,7 +26860,7 @@ namespace fz {
             return result;
         }
 
-        operator double& ()
+        operator double& () override
         {
             double result = 0.0f;
             try {
@@ -26852,7 +26871,7 @@ namespace fz {
             return result;
         }
 
-        operator long double& ()
+        operator long double& () override
         {
             long double result = 0.0f;
             try {
@@ -26863,19 +26882,30 @@ namespace fz {
             return result;
         }
 
-        operator const char* ()
+        operator const char* () override
         {
-            return this->Data.c_str();
+            static std::string str;
+            _internal::convert_unicode_to_utf8_string(str, this->Data.c_str(), this->Data.size());
+            return str.c_str();
         }
 
-        operator std::string& ()
+        operator std::string& () override
+        {
+            static std::string str;
+            _internal::convert_unicode_to_utf8_string(str, this->Data.c_str(), this->Data.size());
+            return str;
+        }
+
+        operator std::wstring& () override
         {
             return this->Data;
         }
 
         friend std::ostream& operator<<(std::ostream& os, const Cell& cell)
         {
-            return os << cell.Data;
+            static std::string str;
+            _internal::convert_unicode_to_utf8_string(str, cell.Data.c_str(), cell.Data.size());
+            return os << str;
         }
 	};
 
@@ -26894,11 +26924,22 @@ namespace fz {
 		CellArray() = default;
 		virtual ~CellArray() = default;
 
+        Cell& GetCell(const std::wstring& attrib)
+        {
+            std::string utf8;
+            _internal::convert_unicode_to_utf8_string(utf8, attrib.c_str(), attrib.size());
+            if (!this->hasAttrib(utf8))
+            {
+                throw std::out_of_range("Did not found element.");
+            }
+            return *m_Cells[utf8];
+        }
+
         Cell& GetCell(const std::string& attrib)
         {
             if (!this->hasAttrib(attrib))
             {
-                throw std::out_of_range("값을 찾을 수 없습니다.");
+                throw std::out_of_range("Did not found element.");
             }
             return *m_Cells[attrib];
         }
@@ -26907,7 +26948,7 @@ namespace fz {
         {
             if (index < 0 || index >= m_IterLists.size())
             {
-                throw std::out_of_range("값을 찾을 수 없습니다.");
+                throw std::out_of_range("Did not found element.");
             }
             return m_IterLists[index].get();
         }
@@ -26922,8 +26963,10 @@ namespace fz {
 		inline Const_iter begin() const                             { return m_IterLists.begin(); }
 		inline Const_iter end()	const                               { return m_IterLists.end(); }
 
+        inline Cell& operator[](const std::wstring& attrib)         { return this->GetCell(attrib); }
 		inline Cell& operator[](const std::string& attrib)          { return this->GetCell(attrib); }
-		inline Cell& operator[](const char* attrib)                 { return this->GetCell(attrib); }
+        inline Cell& operator[](const wchar_t* attrib)              { return this->GetCell(attrib); }
+        inline Cell& operator[](const char* attrib)                 { return this->GetCell(attrib); }
 		inline Cell& operator[](int index)                          { return this->GetCell(index); }
 
 	protected:
@@ -26931,11 +26974,13 @@ namespace fz {
         {
             if (this->hasAttrib(attrib))
             {
-                throw std::out_of_range("중복된 속성이 존재합니다.");
+                throw std::out_of_range("Duplicate attributes exist.");
             }
             std::shared_ptr<Cell> newCell = nullptr;
             newCell = std::make_shared<Cell>();
-            newCell->Data = value;
+            std::wstring wstr;
+            _internal::convert_utf8_to_unicode_string(wstr, value.c_str(), value.size());
+            newCell->Data = wstr;
             newCell->Attribute = attrib;
             m_Cells.insert({ attrib, newCell });
             Cell& cellRef = *newCell;
@@ -27003,7 +27048,8 @@ namespace fz {
                 const std::string& newKey = valueList[0];
                 if (this->hasKey(newKey))
                 {
-                    throw std::out_of_range("이미 테이블에 키가 존재합니다.");
+                    throw std::out_of_range("A key already exists in the table.");
+                    return;
                 }
                 std::shared_ptr<CellArray> newCellMap;
                 newCellMap = std::make_shared<CellArray>();
@@ -27012,7 +27058,8 @@ namespace fz {
 
                 if (attribList.size() != valueCount)
                 {
-                    throw std::out_of_range("속성과 행의 개수가 다릅니다.");
+                    throw std::out_of_range("The number of attributes and rows are different.");
+                    return;
                 }
                 for (int j = 1; j < valueCount; ++j)
                 {
@@ -27067,17 +27114,29 @@ namespace fz {
                         isFirst = false;
                         std::cout << cell.get().Key << "\t";
                     }
-                    std::cout << cell.get().Data << "\t";
+                    std::string str = cell.get();
+                    std::cout << str << "\t";
                 }
                 std::cout << std::endl;
             }
+        }
+
+        CellArray& GetRow(const std::wstring& key)
+        {
+            std::string utf8;
+            _internal::convert_unicode_to_utf8_string(utf8, key.c_str(), key.size());
+            if (!this->hasKey(utf8))
+            {
+                throw std::out_of_range("Did not found value");
+            }
+            return *m_CellArray[utf8];
         }
 
         CellArray& GetRow(const std::string& key)
         {
             if (!this->hasKey(key))
             {
-                throw std::out_of_range("값을 찾을 수 없습니다.");
+                throw std::out_of_range("Did not found value");
             }
             return *m_CellArray[key];
         }
@@ -27086,25 +27145,25 @@ namespace fz {
         {
             if (index < 0 || index >= m_CellArrayList.size())
             {
-                throw std::out_of_range("값을 찾을 수 없습니다.");
+                throw std::out_of_range("Did not found value");
             }
             return m_CellArrayList[index].get();
         }
 
-        inline int Empty()                  { return m_CellArray.empty(); }
-        inline int Empty() const            { return m_CellArray.empty(); }
-        inline int Size()                   { return (int)m_CellArrayList.size(); }
-        inline int Size() const             { return (int)m_CellArrayList.size(); }
-        inline Iter begin()                 { return m_CellArrayList.begin(); }
-        inline Iter end()                   { return m_CellArrayList.end(); }
-        inline Const_iter begin() const     { return m_CellArrayList.begin(); }
-        inline Const_iter end()	const       { return m_CellArrayList.end(); }
+        inline int Empty()                                          { return m_CellArray.empty(); }
+        inline int Empty() const                                    { return m_CellArray.empty(); }
+        inline int Size()                                           { return (int)m_CellArrayList.size(); }
+        inline int Size() const                                     { return (int)m_CellArrayList.size(); }
+        inline Iter begin()                                         { return m_CellArrayList.begin(); }
+        inline Iter end()                                           { return m_CellArrayList.end(); }
+        inline Const_iter begin() const                             { return m_CellArrayList.begin(); }
+        inline Const_iter end()	const                               { return m_CellArrayList.end(); }
 
-        inline CellArray& operator[](const std::wstring& key) { return this->GetRow(key); }
-        inline CellArray& operator[](const std::string& key) { return this->GetRow(key); }
-        inline CellArray& operator[](const wchar_t* key) { return this->GetRow(key); }
-        inline CellArray& operator[](const char* key) { return this->GetRow(key); }
-        inline CellArray& operator[](int index) { return this->GetRow(index); }
+        inline CellArray& operator[](const std::wstring& key)       { return this->GetRow(key); }
+        inline CellArray& operator[](const std::string& key)        { return this->GetRow(key); }
+        inline CellArray& operator[](const wchar_t* key)            { return this->GetRow(key); }
+        inline CellArray& operator[](const char* key)               { return this->GetRow(key); }
+        inline CellArray& operator[](int index)                     { return this->GetRow(index); }
 
     protected:
         bool hasKey(const std::wstring& key)
@@ -27183,8 +27242,8 @@ namespace fz {
             const auto& it = s_CsvTablePool.find(csvPath);
             if (it == s_CsvTablePool.end())
             {
-                std::cerr << "파일이 로드되지 않았습니다. path = " << csvPath << std::endl;
-                throw std::out_of_range("파일이 로드되지 않았습니다.");
+                std::cerr << "The file cannot be loaded. path = " << csvPath << std::endl;
+                throw std::out_of_range("The file cannot be loaded.");
             }
             return *s_CsvTablePool[csvPath];
         }
@@ -27194,8 +27253,8 @@ namespace fz {
             const auto& it = s_JsonPool.find(jsonPath);
             if (it == s_JsonPool.end())
             {
-                std::cerr << "파일이 로드되지 않았습니다. path = " << jsonPath << std::endl;
-                throw std::out_of_range("파일이 로드되지 않았습니다.");
+                std::cerr << "The file cannot be loaded. path = " << jsonPath << std::endl;
+                throw std::out_of_range("The file cannot be loaded.");
             }
             return *s_JsonPool[jsonPath];
         }
@@ -27245,7 +27304,7 @@ namespace fz {
             file.open(path);
             if (!file.is_open())
             {
-                std::cerr << "파일을 찾을 수 없습니다. path = " << path << std::endl;
+                std::cerr << "Did not found file. path = " << path << std::endl;
                 result = false;
             }
             file.close();
@@ -27253,11 +27312,8 @@ namespace fz {
         }
 
     private:
-        static CsvTablePool s_CsvTablePool;
-        static JsonPool s_JsonPool;
+        inline static CsvTablePool s_CsvTablePool;
+        inline static JsonPool s_JsonPool;
     };
-
-    Database::CsvTablePool Database::s_CsvTablePool;
-    Database::JsonPool Database::s_JsonPool;
 
 } // namespace fz
