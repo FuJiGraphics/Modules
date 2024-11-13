@@ -1,5 +1,6 @@
 #include <iostream>
 #include "FZLog.hpp"
+#define FZLOG_DEBUG_MODE_ENABLED
 
 int main(void)
 {

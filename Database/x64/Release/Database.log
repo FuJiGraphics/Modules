@@ -1,0 +1,13 @@
+﻿  main.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.41.34120\include\filesystem(12): warning STL4038: The contents of <filesystem> are available only with C++17 or later.
+D:\Modules\Database\Database.hpp(26715,9): warning C4099: 'fz::Cell': 처음에는 'class'을(를) 사용하여 형식 이름을 표시했는데 이제는 'struct'을(를) 사용하여 표시합니다.
+  (소스 파일 'main.cpp'을(를) 컴파일하는 중)
+      D:\Modules\Database\Database.hpp(26715,9):
+      'fz::Cell' 선언을 참조하십시오.
+  
+  코드를 생성하고 있습니다.
+  0 of 2567 functions ( 0.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    0 functions had inline decision re-evaluated but remain unchanged
+  코드를 생성했습니다.
+  Database.vcxproj -> D:\Modules\x64\Release\Database.exe
