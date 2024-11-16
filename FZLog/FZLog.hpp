@@ -163,6 +163,24 @@ namespace _internal {
                 m_level = level;
             }
 
+            template <typename ...Args>
+            static bool FileDoesNotExist(const std::string& filePath, Args&& ...args)
+            {
+                bool result = false;
+                std::ifstream file(filePath);
+                if (!file.isOpen())
+                {
+                    result = true;
+                    s_Logger.error(std::forward<Args>(args)...);
+                }
+                file.close();
+                return (false);
+            }
+
+            static void SetName(const std::string& name) {
+                s_Logger.setName(name);
+            }
+
         private:
             void log(const std::string& message, const Level& level, const std::vector<std::string>& args)
             {
@@ -261,28 +279,29 @@ namespace fz {
             s_Logger.setName(name);
         }
 
-    private:
-        static _internal::Realog::Logger s_Logger;
-    };
+		template <typename ...Args>
+		static bool FileDoesNotExist(const std::string& filePath, Args&& ...args)
+		{
+			bool result = false;
+			std::ifstream file(filePath);
+			if (!file.isOpen())
+			{
+				result = true;
+				s_Logger.error(std::forward<Args>(args)...);
+			}
+			file.close();
+			return (false);
+		}
 
-    _internal::Realog::Logger Logger::s_Logger;
+		static void SetName(const std::string& name) {
+			s_Logger.setName(name);
+		}
+
+    private:
+        inline static _internal::Realog::Logger s_Logger;
+    };
 }
 
-/**
- * @def FZLOG_DEBUG_MODE_ENABLED
- *
- * @brief 디버그 모드에서도 로깅 시스템을 활성화합니다.
- *
- * Example usage:
- * @code
- *      #define FZLOG_DEBUG_MODE_ENABLED
- *      FZLOG_TRACE("Test FZLog");
- * @endcode
- *
- * @note 
- * - 만약 디버그 모드일 때 로그 시스템을 비활성화하고자 하는 경우에는 해당 매크로를 삭제해주세요.
- * - FZLOG_DEBUG_MODE_ENABLED는 현재 포함하는 FZLog.hpp의 상단에 위치해야 합니다. 
- */
 #if defined(_DEBUG) || defined(FZLOG_DEBUG_MODE_ENABLED)
     #define FZLOG_TRACE(...)                { fz::Logger::Trace(__VA_ARGS__); }
     #define FZLOG_DEBUG(...)                { fz::Logger::Debug(__VA_ARGS__); }
@@ -291,6 +310,8 @@ namespace fz {
     #define FZLOG_ERROR(...)                { fz::Logger::Error(__VA_ARGS__); }
     #define FZLOG_CRITICAL(...)             { fz::Logger::Critical(__VA_ARGS__); }
     #define FZLOG_ASSERT(flag, ...)         { if(!(flag)) { fz::Logger::Error(__VA_ARGS__); DebugBreak();} }
+    #define FZLOG_ASSERT_FILE(filePath, ...)    { if(fz::Logger::FileDoesNotExist(filePath, __VA_ARGS__)) { DebugBreak(); } }
+
 #else
     #define FZLOG_TRACE(...)       
     #define FZLOG_DEBUG(...)       
@@ -299,6 +320,7 @@ namespace fz {
     #define FZLOG_ERROR(...)       
     #define FZLOG_CRITICAL(...)    
     #define FZLOG_ASSERT(flag, ...)
+    #define FZLOG_ASSERT_FILE(filePath, ...)
 #endif
 
 #endif /* defined(__FZ_VEGA_HEADER_H_) */
