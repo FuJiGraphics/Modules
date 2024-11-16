@@ -6,46 +6,12 @@
 #include <ctime>
 #include <sstream>
 #include <vector>
+#include <fstream>
 #include <Windows.h>
 #define WIN32_LEAN_AND_MEAN
 
-namespace _internal {
+namespace fzlog_internal {
     namespace Realog {
-
-        static void convert_unicode_to_ansi_string(
-            std::string& ansi,
-            const wchar_t* unicode,
-            const size_t unicode_size
-        ) {
-            do {
-
-                if ((nullptr == unicode) || (0 == unicode_size)) {
-                    break;
-                }
-                ansi.clear();
-                int required_cch = ::WideCharToMultiByte(
-                    CP_ACP,
-                    0,
-                    unicode, static_cast<int>(unicode_size),
-                    nullptr, 0,
-                    nullptr, nullptr
-                );
-                if (0 == required_cch) {
-                    break;
-                }
-                ansi.resize(required_cch);
-                if (0 == ::WideCharToMultiByte(
-                    CP_ACP,
-                    0,
-                    unicode, static_cast<int>(unicode_size),
-                    const_cast<char*>(ansi.c_str()), static_cast<int>(ansi.size()),
-                    nullptr, nullptr
-                )) {
-                    break;
-                }
-            } while (false);
-            return;
-        }
         
         struct NoArg {};
 
@@ -163,24 +129,6 @@ namespace _internal {
                 m_level = level;
             }
 
-            template <typename ...Args>
-            static bool FileDoesNotExist(const std::string& filePath, Args&& ...args)
-            {
-                bool result = false;
-                std::ifstream file(filePath);
-                if (!file.isOpen())
-                {
-                    result = true;
-                    s_Logger.error(std::forward<Args>(args)...);
-                }
-                file.close();
-                return (false);
-            }
-
-            static void SetName(const std::string& name) {
-                s_Logger.setName(name);
-            }
-
         private:
             void log(const std::string& message, const Level& level, const std::vector<std::string>& args)
             {
@@ -275,43 +223,54 @@ namespace fz {
             s_Logger.critical(std::forward<Args>(args)...);
         }
 
+        template <typename ...Args>
+        static bool FileDoesNotExist(const std::string& filePath, Args&& ...args)
+        {
+            bool result = false;
+            std::ifstream file(filePath);
+            if (!file.is_open())
+            {
+                result = true;
+                s_Logger.error(std::forward<Args>(args)...);
+            }
+            file.close();
+            return (false);
+        }
+
         static void SetName(const std::string& name) {
             s_Logger.setName(name);
         }
 
-		template <typename ...Args>
-		static bool FileDoesNotExist(const std::string& filePath, Args&& ...args)
-		{
-			bool result = false;
-			std::ifstream file(filePath);
-			if (!file.isOpen())
-			{
-				result = true;
-				s_Logger.error(std::forward<Args>(args)...);
-			}
-			file.close();
-			return (false);
-		}
-
-		static void SetName(const std::string& name) {
-			s_Logger.setName(name);
-		}
 
     private:
-        inline static _internal::Realog::Logger s_Logger;
+        inline static fzlog_internal::Realog::Logger s_Logger;
     };
 }
 
+/**
+ * @def FZLOG_DEBUG_MODE_ENABLED
+ *
+ * @brief 디버그 모드에서도 로깅 시스템을 활성화합니다.
+ *
+ * Example usage:
+ * @code
+ *      #define FZLOG_DEBUG_MODE_ENABLED
+ *      FZLOG_TRACE("Test FZLog");
+ * @endcode
+ *
+ * @note 
+ * - 만약 디버그 모드일 때 로그 시스템을 비활성화하고자 하는 경우에는 해당 매크로를 삭제해주세요.
+ * - FZLOG_DEBUG_MODE_ENABLED는 현재 포함하는 FZLog.hpp의 상단에 위치해야 합니다. 
+ */
 #if defined(_DEBUG) || defined(FZLOG_DEBUG_MODE_ENABLED)
-    #define FZLOG_TRACE(...)                { fz::Logger::Trace(__VA_ARGS__); }
-    #define FZLOG_DEBUG(...)                { fz::Logger::Debug(__VA_ARGS__); }
-    #define FZLOG_INFO(...)                 { fz::Logger::Info(__VA_ARGS__); }
-    #define FZLOG_WARN(...)                 { fz::Logger::Warn(__VA_ARGS__); }
-    #define FZLOG_ERROR(...)                { fz::Logger::Error(__VA_ARGS__); }
-    #define FZLOG_CRITICAL(...)             { fz::Logger::Critical(__VA_ARGS__); }
-    #define FZLOG_ASSERT(flag, ...)         { if(!(flag)) { fz::Logger::Error(__VA_ARGS__); DebugBreak();} }
+    #define FZLOG_TRACE(...)                    fz::Logger::Trace(__VA_ARGS__)
+    #define FZLOG_DEBUG(...)                    fz::Logger::Debug(__VA_ARGS__)
+    #define FZLOG_INFO(...)                     fz::Logger::Info(__VA_ARGS__)
+    #define FZLOG_WARN(...)                     fz::Logger::Warn(__VA_ARGS__)
+    #define FZLOG_ERROR(...)                    fz::Logger::Error(__VA_ARGS__)
+    #define FZLOG_CRITICAL(...)                 fz::Logger::Critical(__VA_ARGS__)
+    #define FZLOG_ASSERT(flag, ...)             { if(!(flag)) { fz::Logger::Error(__VA_ARGS__); DebugBreak();} }
     #define FZLOG_ASSERT_FILE(filePath, ...)    { if(fz::Logger::FileDoesNotExist(filePath, __VA_ARGS__)) { DebugBreak(); } }
-
 #else
     #define FZLOG_TRACE(...)       
     #define FZLOG_DEBUG(...)       
