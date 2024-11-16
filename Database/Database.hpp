@@ -26688,7 +26688,7 @@ template <class Key, class T, class IgnoredLess = std::less<Key>,
 
 namespace fz {
 #include <Windows.h>
-    namespace _internal {
+    namespace fzDatabase_internal {
         static void convert_unicode_to_utf8_string(std::string& utf8, const wchar_t* unicode, const size_t unicode_size) 
         {
             do {
@@ -26718,7 +26718,7 @@ namespace fz {
             } while (false);
         }
 
-        void convert_utf8_to_unicode_string(std::wstring& unicode, const char* utf8, const size_t utf8_size) 
+        static void convert_utf8_to_unicode_string(std::wstring& unicode, const char* utf8, const size_t utf8_size) 
         {
             do {
                 if ((nullptr == utf8) || (0 == utf8_size)) 
